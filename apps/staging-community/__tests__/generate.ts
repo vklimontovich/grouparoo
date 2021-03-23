@@ -5,7 +5,14 @@ import doCommand from "./utils/doCommand";
 const roo = path.join(__dirname, "../../../cli/dist/grouparoo.js");
 const testDir = path.join(__dirname, "..");
 
-const sourceId = `__test_pg_source__`;
+const appId = `__test_sqlite_app__`;
+const sourceId = `__test_sqlite_source__`;
+
+const copyAppConfig = () => {
+  const srcFile = path.join(__dirname, "./fixtures/sqlite-app.js");
+  const destFile = path.join(__dirname, `../config/apps/${appId}.js`);
+  fs.copyFileSync(srcFile, destFile);
+};
 
 describe("app-templates/source/table", () => {
   beforeAll(() => {
@@ -14,15 +21,15 @@ describe("app-templates/source/table", () => {
     }
   });
   afterEach(() => {
-    const filesToDelete = [`sources/${sourceId}.js`];
+    const filesToDelete = [`sources/${sourceId}.js`, `apps/${appId}.js`];
     const baseDir = path.join(__dirname, "../config");
     for (let file of filesToDelete) {
       const filePath = path.join(baseDir, file);
       if (fs.existsSync(filePath)) fs.rmSync(filePath);
     }
   });
-  test("writes postgres:table:source generator template", async () => {
-    const command = `${roo} generate postgres:table:source ${sourceId} --parent test__pgApp`;
+  test("writes sqlite:table:source generator template", async () => {
+    const command = `${roo} generate sqlite:table:source ${sourceId} --parent ${appId}`;
     const { stdout, exitCode } = await doCommand(command, testDir);
     expect(exitCode).toBe(0);
     const expFilePath = path.join(testDir, `config/sources/${sourceId}.js`);
@@ -32,7 +39,9 @@ describe("app-templates/source/table", () => {
     );
   });
   test("throws error when using asterisk without quotes", async () => {
-    const command = `${roo} generate postgres:table:source ${sourceId} --parent test__pgApp --from users --with *`;
+    copyAppConfig();
+    await doCommand(`${roo} apply`);
+    const command = `${roo} generate sqlite:table:source ${sourceId} --parent ${appId} --from users --with *`;
     const { stderr, stdout, exitCode } = await doCommand(command, testDir);
     console.log({ stdout, stderr });
   });
