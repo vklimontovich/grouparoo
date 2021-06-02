@@ -12,7 +12,8 @@
     "@grouparoo/core": "0.3.3",
     "@grouparoo/demo": "0.3.3",
     "@grouparoo/postgres": "0.3.3",
-    "@grouparoo/sqlite": "0.3.3"
+    "@grouparoo/sqlite": "0.3.3",
+    "grouparoo": "0.3.3"
   },
   "devDependencies": {
     "@grouparoo/spec-helper": "0.3.3",
