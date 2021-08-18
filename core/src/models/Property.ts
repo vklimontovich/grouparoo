@@ -96,7 +96,7 @@ export interface PluginConnectionPropertyOption {
   displayName?: string;
   required: boolean;
   description: string;
-  type: string;
+  type: "list" | "text"; // TODO: WHAT ARE THE OTHER ONES;
   primary?: boolean;
   options: (argument: {
     connection: any;
