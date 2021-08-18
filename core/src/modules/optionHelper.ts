@@ -19,7 +19,7 @@ export const ObfuscatedPasswordString = "__ObfuscatedPassword";
 
 export namespace OptionHelper {
   export interface SimpleOptions {
-    [key: string]: string | number | boolean | string[];
+    [key: string]: string | number | boolean;
   }
 
   export async function getOptions(
