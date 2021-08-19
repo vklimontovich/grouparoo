@@ -165,7 +165,7 @@ export namespace helper {
 
   /**
    * I am used by clients who want to start and stop their server for profile snapshot testing.
-   * As an Arrow function, 'll be in the Jest namespace when used
+   * As an Arrow function, I'll be in the Jest namespace when used
    */
   export const grouparooTestServer = (
     options: {
@@ -502,7 +502,7 @@ export namespace helper {
 
   /**
    * Find or Create a profile given the key of a unique property key and value ({email: 'person@example.com'}) and optional options.
-   * Returns bot the profile itself and a snapshot.
+   * Returns both the profile itself and a snapshot.
    * Calls Profile.findOrCreateByUniqueProfileProperties() under the hood, as well as Profile.sync()
    */
   export async function getProfile(
