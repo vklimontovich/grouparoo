@@ -21,7 +21,7 @@ import Sequelize, { Op, WhereOptions } from "sequelize";
 import { env, redis, config } from "actionhero";
 import { plugin } from "../modules/plugin";
 import { LoggedModel } from "../classes/loggedModel";
-import { GrouparooRecord } from "./Record";
+import { GrouparooRecord } from "./GrouparooRecord";
 import { RecordProperty } from "./RecordProperty";
 import { App, SimpleAppOptions } from "./App";
 import { Source, SimpleSourceOptions, SourceMapping } from "./Source";
