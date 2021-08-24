@@ -1,6 +1,6 @@
 import { Op } from "sequelize";
 import { Import } from "../../models/Import";
-import { GrouparooRecord } from "../../models/Record";
+import { GrouparooRecord } from "../../models/GrouparooRecord";
 import { CLSTask } from "../../classes/tasks/clsTask";
 import { RecordProperty } from "../../models/RecordProperty";
 import { plugin } from "../../modules/plugin";

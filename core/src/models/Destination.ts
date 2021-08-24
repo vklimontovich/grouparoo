@@ -20,7 +20,7 @@ import { LoggedModel } from "../classes/loggedModel";
 import { App } from "./App";
 import { Mapping } from "./Mapping";
 import { Option } from "./Option";
-import { GrouparooRecord } from "./Record";
+import { GrouparooRecord } from "./GrouparooRecord";
 import { Group } from "./Group";
 import { Export } from "./Export";
 import { ExportProcessor } from "./ExportProcessor";

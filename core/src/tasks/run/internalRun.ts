@@ -1,5 +1,5 @@
 import { Run } from "../../models/Run";
-import { GrouparooRecord } from "../../models/Record";
+import { GrouparooRecord } from "../../models/GrouparooRecord";
 import { plugin } from "../../modules/plugin";
 import { RecordProperty } from "../../models/RecordProperty";
 import { CLSTask } from "../../classes/tasks/clsTask";

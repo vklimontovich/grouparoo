@@ -21,7 +21,7 @@ import { LoggedModel } from "../classes/loggedModel";
 import { GroupMember } from "./GroupMember";
 import { GroupRule } from "./GroupRule";
 import { Run } from "./Run";
-import { GrouparooRecord } from "./Record";
+import { GrouparooRecord } from "./GrouparooRecord";
 import { Setting } from "./Setting";
 import { RecordProperty } from "./RecordProperty";
 import { Destination } from "./Destination";
