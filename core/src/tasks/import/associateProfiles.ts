@@ -2,11 +2,11 @@ import { plugin } from "../../modules/plugin";
 import { CLSTask } from "../../classes/tasks/clsTask";
 import { ImportOps } from "../../modules/ops/import";
 
-export class ImportAssociateProfiles extends CLSTask {
+export class ImportAssociateRecords extends CLSTask {
   constructor() {
     super();
-    this.name = "import:associateProfiles";
-    this.description = "ensure that imports are associated to profiles";
+    this.name = "import:associateRecords";
+    this.description = "ensure that imports are associated to records";
     this.frequency = 1000 * 10;
     this.queue = "imports";
     this.inputs = {};
@@ -14,7 +14,7 @@ export class ImportAssociateProfiles extends CLSTask {
 
   async runWithinTransaction() {
     const limit = parseInt(
-      (await plugin.readSetting("core", "runs-profile-batch-size")).value
+      (await plugin.readSetting("core", "runs-record-batch-size")).value
     );
 
     const delayMs =

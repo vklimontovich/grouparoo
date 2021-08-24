@@ -58,8 +58,8 @@ export class Plugins extends CLSInitializer {
         type: "number",
       },
       {
-        key: "runs-profile-batch-size",
-        title: "Runs: Profile Batch Size",
+        key: "runs-record-batch-size",
+        title: "Runs: GrouparooRecord Batch Size",
         defaultValue: 1000,
         description:
           "How many Imports and should a Run enqueue in each batch before deferring to associate those Imports already enqueued?",
@@ -70,15 +70,15 @@ export class Plugins extends CLSInitializer {
         title: "Runs: Recurring Internal Run Frequency Hours",
         defaultValue: 0,
         description:
-          "Should Grouparoo periodically re-import all of your profiles, and if so, how long between runs (in hours)?",
+          "Should Grouparoo periodically re-import all of your records, and if so, how long between runs (in hours)?",
         type: "number",
       },
       {
-        key: "imports-profile-properties-batch-size",
-        title: "Imports: Profile Property Batch Size",
+        key: "imports-record-properties-batch-size",
+        title: "Imports: GrouparooRecord Property Batch Size",
         defaultValue: 500,
         description:
-          "How many Profile Properties needing import should we process at once?",
+          "How many GrouparooRecord Properties needing import should we process at once?",
         type: "number",
       },
       {
@@ -99,11 +99,11 @@ export class Plugins extends CLSInitializer {
         variant: "warning",
       },
       {
-        key: "exports-profile-batch-size",
-        title: "Exports: Profile Batch Size",
+        key: "exports-record-batch-size",
+        title: "Exports: GrouparooRecord Batch Size",
         defaultValue: 100,
         description:
-          "How many Profiles should a Run try to send at once to Destinations which support batch exporting?",
+          "How many GrouparooRecords should a Run try to send at once to Destinations which support batch exporting?",
         type: "number",
       },
       {
@@ -139,19 +139,19 @@ export class Plugins extends CLSInitializer {
         type: "number",
       },
       {
-        key: "profiles-default-country-code",
-        title: "Profile: Default Country Code",
+        key: "records-default-country-code",
+        title: "GrouparooRecord: Default Country Code",
         defaultValue: "US",
         description:
           "The default country code Grouparoo will use to format phone numbers and display data",
         type: "string",
       },
       {
-        key: "confirm-profiles-days",
-        title: "Confirm Profile Existence Days",
+        key: "confirm-records-days",
+        title: "Confirm GrouparooRecord Existence Days",
         defaultValue: 7,
         description:
-          "How often should Grouparoo check that a Profile still exists in your Source, deleting the Profile if it has been removed? Setting to `0` will disable this check.",
+          "How often should Grouparoo check that a GrouparooRecord still exists in your Source, deleting the GrouparooRecord if it has been removed? Setting to `0` will disable this check.",
         type: "number",
       },
       {
@@ -175,7 +175,7 @@ export class Plugins extends CLSInitializer {
         title: "Sweeper: Delete Old Exports Days",
         defaultValue: 31,
         description:
-          "How many days should we keep Export records for on the server?  We will keep the most recent export for each Profile & Destination.",
+          "How many days should we keep Export records for on the server?  We will keep the most recent export for each GrouparooRecord & Destination.",
         type: "number",
       },
       {

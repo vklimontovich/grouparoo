@@ -32,7 +32,7 @@ import { loadSchedule, deleteSchedules } from "./schedule";
 import { loadSetting } from "./setting";
 import { loadDestination, deleteDestinations } from "./destination";
 import { ConfigWriter } from "../configWriter";
-import { loadProfile } from "./profile";
+import { loadRecord } from "./record";
 import Sequelize from "sequelize";
 
 export async function loadConfigDirectory(
@@ -136,7 +136,7 @@ export async function processConfigObjects(
     apikey: [],
     team: [],
     teammember: [],
-    profile: [],
+    record: [],
   };
   const errors: string[] = [];
 
@@ -269,8 +269,8 @@ export async function processConfigObjects(
             validate
           );
           break;
-        case "profile":
-          ids = await loadProfile(configObject, externallyValidate, validate);
+        case "record":
+          ids = await loadRecord(configObject, externallyValidate, validate);
           break;
         default:
           throw new Error(`unknown config object class: ${configObject.class}`);
@@ -332,7 +332,7 @@ export async function deleteLockedObjects(seenIds) {
     apikey: [],
     team: [],
     teammember: [],
-    profile: [],
+    record: [],
   };
 
   deletedIds["teammember"] = await deleteTeamMembers(seenIds.teammember);

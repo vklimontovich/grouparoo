@@ -1,27 +1,27 @@
 import { CLSTask } from "../../classes/tasks/clsTask";
-import { ProfileOps } from "../../modules/ops/profile";
+import { RecordOps } from "../../modules/ops/record";
 import { plugin } from "../../modules/plugin";
 
-export class ProfilesCheckReady extends CLSTask {
+export class GrouparooRecordsCheckReady extends CLSTask {
   constructor() {
     super();
-    this.name = "profiles:checkReady";
+    this.name = "records:checkReady";
     this.description =
-      "If all of a Profile's Properties are ready, mark the profile ready and complete the import";
+      "If all of a GrouparooRecord's Properties are ready, mark the record ready and complete the import";
     this.frequency = 1000 * 10;
-    this.queue = "profiles";
+    this.queue = "records";
     this.inputs = {};
   }
 
   async runWithinTransaction() {
     const limit = parseInt(
-      (await plugin.readSetting("core", "runs-profile-batch-size")).value
+      (await plugin.readSetting("core", "runs-record-batch-size")).value
     );
 
     const toExport = process.env.GROUPAROO_DISABLE_EXPORTS
       ? process.env.GROUPAROO_DISABLE_EXPORTS !== "true"
       : true;
 
-    await ProfileOps.makeReadyAndCompleteImports(limit, toExport);
+    await RecordOps.makeReadyAndCompleteImports(limit, toExport);
   }
 }

@@ -17,7 +17,7 @@ export namespace ScheduleOps {
     const app = await source.$get("app", { include: [Option], scope: null });
     const properties = await Property.findAllWithCache();
     const { pluginConnection } = await source.getPlugin();
-    const method = pluginConnection.methods.profiles;
+    const method = pluginConnection.methods.records;
 
     if (!method) {
       throw new Error(`cannot find an import method for app type ${app.type}`);
@@ -31,7 +31,7 @@ export namespace ScheduleOps {
     await source.validateOptions(sourceOptions);
 
     const limit: number = parseInt(
-      (await plugin.readSetting("core", "runs-profile-batch-size")).value
+      (await plugin.readSetting("core", "runs-record-batch-size")).value
     );
 
     const sourceOffset: number | string = run.sourceOffset || 0;

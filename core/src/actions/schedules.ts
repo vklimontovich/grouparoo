@@ -111,7 +111,10 @@ export class ScheduleCreate extends AuthenticatedAction {
       name: { required: false },
       sourceId: { required: true },
       recurring: { required: true, formatter: APIData.ensureBoolean },
-      confirmProfiles: { required: false, formatter: APIData.ensureBoolean },
+      confirmRecords: {
+        required: false,
+        formatter: APIData.ensureBoolean,
+      },
       state: { required: false },
       options: { required: false, formatter: APIData.ensureObject },
       recurringFrequency: {
@@ -129,7 +132,7 @@ export class ScheduleCreate extends AuthenticatedAction {
       sourceId: params.sourceId,
       recurring: params.recurring,
       recurringFrequency: params.recurringFrequency,
-      confirmProfiles: params.confirmProfiles,
+      confirmRecords: params.confirmRecords,
     });
 
     if (params.options) await schedule.setOptions(params.options);
@@ -157,7 +160,10 @@ export class ScheduleEdit extends AuthenticatedAction {
       name: { required: false },
       sourceId: { required: false },
       recurring: { required: false, formatter: APIData.ensureBoolean },
-      confirmProfiles: { required: false, formatter: APIData.ensureBoolean },
+      confirmRecords: {
+        required: false,
+        formatter: APIData.ensureBoolean,
+      },
       state: { required: false },
       options: { required: false, formatter: APIData.ensureObject },
       recurringFrequency: { required: false, formatter: APIData.ensureNumber },
@@ -181,7 +187,7 @@ export class ScheduleEdit extends AuthenticatedAction {
     await schedule.update({
       state: params.state,
       name: params.name,
-      confirmProfiles: params.confirmProfiles,
+      confirmRecords: params.confirmRecords,
     });
 
     await ConfigWriter.run();

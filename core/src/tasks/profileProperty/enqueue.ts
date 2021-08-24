@@ -2,42 +2,35 @@ import { CLSTask } from "../../classes/tasks/clsTask";
 import { CLS } from "../../modules/cls";
 import { Source } from "../../models/Source";
 import { plugin } from "../../modules/plugin";
-import { ProfilePropertyOps } from "../../modules/ops/profileProperty";
+import { RecordPropertyOps } from "../../modules/ops/recordProperty";
 import { api, env } from "actionhero";
 
-export class ProfilePropertiesEnqueue extends CLSTask {
+export class RecordPropertiesEnqueue extends CLSTask {
   constructor() {
     super();
-    this.name = "profileProperties:enqueue";
+    this.name = "recordProperties:enqueue";
     this.description =
-      "Enqueue a batch of Profiles who need a Profile Property";
+      "Enqueue a batch of GrouparooRecords who need a GrouparooRecord Property";
     this.frequency = 1000 * 10;
-    this.queue = "profileProperties";
+    this.queue = "recordProperties";
     this.inputs = {};
   }
 
   async runWithinTransaction(worker) {
     let count = 0;
     const limit = parseInt(
-      (
-        await plugin.readSetting(
-          "core",
-          "imports-profile-properties-batch-size"
-        )
-      ).value
+      (await plugin.readSetting("core", "imports-record-properties-batch-size"))
+        .value
     );
 
     const sources = await Source.findAll();
 
     for (const source of sources) {
       try {
-        const pendingProfilePropertyIds =
-          await ProfilePropertyOps.processPendingProfileProperties(
-            source,
-            limit
-          );
+        const pendingRecordPropertyIds =
+          await RecordPropertyOps.processPendingRecordProperties(source, limit);
 
-        count = count + pendingProfilePropertyIds.length;
+        count = count + pendingRecordPropertyIds.length;
       } catch (error) {
         if (env === "test") console.error(error);
 

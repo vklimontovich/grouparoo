@@ -22,7 +22,7 @@ export class GroupExportToCSV extends CLSTask {
     const limit: number =
       params.limit ||
       parseInt(
-        (await plugin.readSetting("core", "runs-profile-batch-size")).value
+        (await plugin.readSetting("core", "runs-record-batch-size")).value
       );
 
     const group = await Group.findById(params.groupId);
