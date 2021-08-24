@@ -2,7 +2,7 @@ import {
   plugin,
   SimpleAppOptions,
   SimpleScheduleOptions,
-  ProfilesPluginMethod,
+  RecordsPluginMethod,
   SimpleSourceOptions,
 } from "@grouparoo/core";
 import { DataResponseRow } from "../shared/types";
@@ -19,8 +19,8 @@ export interface GetChangedRowsMethod {
   }): Promise<DataResponseRow[]>;
 }
 
-export const getProfilesMethod = (getChangedRows: GetChangedRowsMethod) => {
-  const profiles: ProfilesPluginMethod = async ({
+export const getRecordsMethod = (getChangedRows: GetChangedRowsMethod) => {
+  const records: RecordsPluginMethod = async ({
     scheduleOptions,
     connection,
     highWaterMark,
@@ -72,5 +72,5 @@ export const getProfilesMethod = (getChangedRows: GetChangedRowsMethod) => {
     };
   };
 
-  return profiles;
+  return records;
 };
