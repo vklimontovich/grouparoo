@@ -1,6 +1,12 @@
 import { helper } from "@grouparoo/spec-helper";
 import { api, task, specHelper, utils } from "actionhero";
-import { Profile, Destination, Export, Run, plugin } from "../../../src";
+import {
+  GrouparooRecord,
+  Destination,
+  Export,
+  Run,
+  plugin,
+} from "../../../src";
 
 describe("tasks/export:enqueue", () => {
   helper.grouparooTestServer({ truncate: true, enableTestPlugin: true });
@@ -14,7 +20,7 @@ describe("tasks/export:enqueue", () => {
 
   describe("with exports", () => {
     let run: Run,
-      profile: Profile,
+      record: GrouparooRecord,
       destination: Destination,
       deletedDestination: Destination;
     let pendingExportA: Export,
@@ -31,7 +37,7 @@ describe("tasks/export:enqueue", () => {
 
     beforeEach(async () => {
       run = await helper.factories.run(null, { state: "running" });
-      profile = await helper.factories.profile();
+      record = await helper.factories.record();
       destination = await helper.factories.destination(null, {
         type: "test-plugin-export-batch",
       });
@@ -45,10 +51,10 @@ describe("tasks/export:enqueue", () => {
       await deletedApp.update({ state: "deleted" });
 
       pendingExportA = await Export.create({
-        profileId: profile.id,
+        recordId: record.id,
         destinationId: destination.id,
-        oldProfileProperties: {},
-        newProfileProperties: {},
+        oldRecordProperties: {},
+        newRecordProperties: {},
         newGroups: [],
         oldGroups: [],
         sendAt: new Date(),
@@ -56,10 +62,10 @@ describe("tasks/export:enqueue", () => {
       });
 
       pendingExportB = await Export.create({
-        profileId: profile.id,
+        recordId: record.id,
         destinationId: destination.id,
-        oldProfileProperties: {},
-        newProfileProperties: {},
+        oldRecordProperties: {},
+        newRecordProperties: {},
         newGroups: [],
         oldGroups: [],
         sendAt: new Date(),
@@ -67,10 +73,10 @@ describe("tasks/export:enqueue", () => {
       });
 
       pendingExportC = await Export.create({
-        profileId: profile.id,
+        recordId: record.id,
         destinationId: deletedDestination.id,
-        oldProfileProperties: {},
-        newProfileProperties: {},
+        oldRecordProperties: {},
+        newRecordProperties: {},
         newGroups: [],
         oldGroups: [],
         sendAt: new Date(),
@@ -78,10 +84,10 @@ describe("tasks/export:enqueue", () => {
       });
 
       recentStartedExport = await Export.create({
-        profileId: profile.id,
+        recordId: record.id,
         destinationId: destination.id,
-        oldProfileProperties: {},
-        newProfileProperties: {},
+        oldRecordProperties: {},
+        newRecordProperties: {},
         newGroups: [],
         oldGroups: [],
         sendAt: new Date(),
@@ -90,10 +96,10 @@ describe("tasks/export:enqueue", () => {
       });
 
       stuckStartedExport = await Export.create({
-        profileId: profile.id,
+        recordId: record.id,
         destinationId: destination.id,
-        oldProfileProperties: {},
-        newProfileProperties: {},
+        oldRecordProperties: {},
+        newRecordProperties: {},
         newGroups: [],
         oldGroups: [],
         sendAt: new Date(0),
@@ -102,10 +108,10 @@ describe("tasks/export:enqueue", () => {
       });
 
       newCompleteExport = await Export.create({
-        profileId: profile.id,
+        recordId: record.id,
         destinationId: destination.id,
-        oldProfileProperties: {},
-        newProfileProperties: {},
+        oldRecordProperties: {},
+        newRecordProperties: {},
         newGroups: [],
         oldGroups: [],
         sendAt: new Date(),
@@ -115,10 +121,10 @@ describe("tasks/export:enqueue", () => {
       });
 
       oldCompleteExport = await Export.create({
-        profileId: profile.id,
+        recordId: record.id,
         destinationId: destination.id,
-        oldProfileProperties: {},
-        newProfileProperties: {},
+        oldRecordProperties: {},
+        newRecordProperties: {},
         newGroups: [],
         oldGroups: [],
         sendAt: new Date(0),
@@ -128,10 +134,10 @@ describe("tasks/export:enqueue", () => {
       });
 
       newErrorExportNow = await Export.create({
-        profileId: profile.id,
+        recordId: record.id,
         destinationId: destination.id,
-        oldProfileProperties: {},
-        newProfileProperties: {},
+        oldRecordProperties: {},
+        newRecordProperties: {},
         newGroups: [],
         oldGroups: [],
         sendAt: new Date(),
@@ -142,10 +148,10 @@ describe("tasks/export:enqueue", () => {
       });
 
       newErrorExportTooSoon = await Export.create({
-        profileId: profile.id,
+        recordId: record.id,
         destinationId: destination.id,
-        oldProfileProperties: {},
-        newProfileProperties: {},
+        oldRecordProperties: {},
+        newRecordProperties: {},
         newGroups: [],
         oldGroups: [],
         sendAt: new Date(),
@@ -157,10 +163,10 @@ describe("tasks/export:enqueue", () => {
       });
 
       oldErrorExport = await Export.create({
-        profileId: profile.id,
+        recordId: record.id,
         destinationId: destination.id,
-        oldProfileProperties: {},
-        newProfileProperties: {},
+        oldRecordProperties: {},
+        newRecordProperties: {},
         newGroups: [],
         oldGroups: [],
         sendAt: new Date(0),
@@ -172,10 +178,10 @@ describe("tasks/export:enqueue", () => {
       });
 
       infoExport = await Export.create({
-        profileId: profile.id,
+        recordId: record.id,
         destinationId: destination.id,
-        oldProfileProperties: {},
-        newProfileProperties: {},
+        oldRecordProperties: {},
+        newRecordProperties: {},
         newGroups: [],
         oldGroups: [],
         sendAt: new Date(),
@@ -192,13 +198,13 @@ describe("tasks/export:enqueue", () => {
     });
 
     afterAll(async () => {
-      await profile.destroy();
+      await record.destroy();
       await destination.destroy();
       await deletedDestination.destroy();
     });
 
     afterEach(async () => {
-      await plugin.updateSetting("core", "exports-profile-batch-size", 100);
+      await plugin.updateSetting("core", "exports-record-batch-size", 100);
     });
 
     test("exports not yet exported or with an error will be enqueued", async () => {
@@ -240,7 +246,7 @@ describe("tasks/export:enqueue", () => {
     });
 
     test("batch size is variable", async () => {
-      await plugin.updateSetting("core", "exports-profile-batch-size", 1);
+      await plugin.updateSetting("core", "exports-record-batch-size", 1);
       await specHelper.runTask("export:enqueue", {}); // first batch (1 for each destination)
 
       // another instance of the task should have been enqueued

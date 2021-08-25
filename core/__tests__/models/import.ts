@@ -19,19 +19,19 @@ describe("models/import", () => {
     await _import.destroy();
   });
 
-  test("the profile can be associated", async () => {
-    const profile = await helper.factories.profile();
-    await profile.addOrUpdateProperties({ email: ["mario@example.com"] });
+  test("the record can be associated", async () => {
+    const record = await helper.factories.record();
+    await record.addOrUpdateProperties({ email: ["mario@example.com"] });
 
     const _import = await Import.create({
       data: { email: "mario@example.com" },
       creatorType: "test",
       creatorId: "",
     });
-    expect(_import.profileId).toBeFalsy();
+    expect(_import.recordId).toBeFalsy();
 
     await _import.associateProfile();
-    expect(_import.profileId).toBe(profile.id);
+    expect(_import.recordId).toBe(record.id);
 
     await _import.destroy();
   });

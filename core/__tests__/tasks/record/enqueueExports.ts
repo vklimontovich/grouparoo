@@ -3,40 +3,40 @@ import { api, task, specHelper } from "actionhero";
 import {
   Import,
   plugin,
-  Profile,
-  ProfileProperty,
+  GrouparooRecord,
+  RecordProperty,
   Property,
 } from "../../../src";
 
-describe("tasks/profiles:enqueueExports", () => {
+describe("tasks/records:enqueueExports", () => {
   helper.grouparooTestServer({ truncate: true, enableTestPlugin: true });
   beforeEach(async () => await api.resque.queue.connection.redis.flushdb());
   beforeAll(async () => await helper.factories.properties());
 
   afterEach(async () => {
-    await plugin.updateSetting("core", "runs-profile-batch-size", 100);
+    await plugin.updateSetting("core", "runs-record-batch-size", 100);
   });
 
-  describe("profiles:enqueueExports", () => {
+  describe("records:enqueueExports", () => {
     test("can be enqueued", async () => {
-      await task.enqueue("profiles:enqueueExports", {
-        profileId: "abc123",
+      await task.enqueue("records:enqueueExports", {
+        recordId: "abc123",
       });
       const found = await specHelper.findEnqueuedTasks(
-        "profiles:enqueueExports"
+        "records:enqueueExports"
       );
       expect(found.length).toEqual(1);
     });
 
-    test("it will not export the profile if it is not ready", async () => {
-      const profile = await helper.factories.profile();
-      await profile.import();
-      await profile.update({ state: "pending" });
+    test("it will not export the record if it is not ready", async () => {
+      const record = await helper.factories.record();
+      await record.import();
+      await record.update({ state: "pending" });
 
       const _import: Import = await helper.factories.import(
         null,
         {},
-        profile.id
+        record.id
       );
       await _import.update({
         groupsUpdatedAt: new Date(),
@@ -44,23 +44,23 @@ describe("tasks/profiles:enqueueExports", () => {
         exportedAt: null,
       });
 
-      await specHelper.runTask("profiles:enqueueExports", {});
+      await specHelper.runTask("records:enqueueExports", {});
 
-      const foundTasks = await specHelper.findEnqueuedTasks("profile:export");
+      const foundTasks = await specHelper.findEnqueuedTasks("record:export");
       expect(foundTasks.length).toBe(0);
 
-      await profile.destroy();
+      await record.destroy();
     });
 
-    test("it will not export the profile if a profile property is not ready", async () => {
-      const profile = await helper.factories.profile();
-      await profile.import();
-      await profile.update({ state: "ready" });
+    test("it will not export the record if a record property is not ready", async () => {
+      const record = await helper.factories.record();
+      await record.import();
+      await record.update({ state: "ready" });
 
       const _import: Import = await helper.factories.import(
         null,
         {},
-        profile.id
+        record.id
       );
       await _import.update({
         groupsUpdatedAt: new Date(),
@@ -69,22 +69,22 @@ describe("tasks/profiles:enqueueExports", () => {
       });
 
       const emailProperty = await Property.findOne({ where: { key: "email" } });
-      const profileProperty = await ProfileProperty.findOne({
-        where: { profileId: profile.id, propertyId: emailProperty.id },
+      const profileProperty = await RecordProperty.findOne({
+        where: { recordId: record.id, propertyId: emailProperty.id },
       });
       await profileProperty.update({ state: "pending" });
 
-      await specHelper.runTask("profiles:enqueueExports", {});
+      await specHelper.runTask("records:enqueueExports", {});
 
-      const foundTasks = await specHelper.findEnqueuedTasks("profile:export");
+      const foundTasks = await specHelper.findEnqueuedTasks("record:export");
       expect(foundTasks.length).toBe(0);
 
-      await profile.destroy();
+      await record.destroy();
     });
 
-    test("it will find profiles that are ready and have an import pending for export", async () => {
+    test("it will find records that are ready and have an import pending for export", async () => {
       // mario is ready and has an import pending to export
-      const mario: Profile = await helper.factories.profile();
+      const mario: GrouparooRecord = await helper.factories.record();
       await mario.import();
       await mario.update({ state: "ready" });
       const marioImport: Import = await helper.factories.import(
@@ -99,7 +99,7 @@ describe("tasks/profiles:enqueueExports", () => {
       });
 
       // luigi is ready, but his import has not been marked completed yet
-      const luigi: Profile = await helper.factories.profile();
+      const luigi: GrouparooRecord = await helper.factories.record();
       await luigi.import();
       await luigi.update({ state: "ready" });
       const luigiImport: Import = await helper.factories.import(
@@ -114,7 +114,7 @@ describe("tasks/profiles:enqueueExports", () => {
       });
 
       // toad has a pending import, but is not ready
-      const toad = await helper.factories.profile();
+      const toad = await helper.factories.record();
       await toad.import();
       await toad.update({ state: "pending" });
       const toadImport: Import = await helper.factories.import(
@@ -128,13 +128,13 @@ describe("tasks/profiles:enqueueExports", () => {
         exportedAt: null,
       });
 
-      await specHelper.runTask("profiles:enqueueExports", {});
+      await specHelper.runTask("records:enqueueExports", {});
 
-      const foundTasks = await specHelper.findEnqueuedTasks("profile:export");
+      const foundTasks = await specHelper.findEnqueuedTasks("record:export");
       expect(foundTasks.length).toEqual(1);
       expect(foundTasks[0].args[0]).toEqual({
         force: false,
-        profileId: mario.id,
+        recordId: mario.id,
       });
 
       await mario.destroy();
@@ -143,9 +143,9 @@ describe("tasks/profiles:enqueueExports", () => {
     });
 
     test("batch size can be configured with a setting", async () => {
-      await plugin.updateSetting("core", "runs-profile-batch-size", 1);
+      await plugin.updateSetting("core", "runs-record-batch-size", 1);
 
-      const mario: Profile = await helper.factories.profile();
+      const mario: GrouparooRecord = await helper.factories.record();
       await mario.import();
       await mario.update({ state: "ready" });
       const marioImport: Import = await helper.factories.import(
@@ -159,7 +159,7 @@ describe("tasks/profiles:enqueueExports", () => {
         exportedAt: null,
       });
 
-      const luigi: Profile = await helper.factories.profile();
+      const luigi: GrouparooRecord = await helper.factories.record();
       await luigi.import();
       await luigi.update({ state: "ready" });
       const luigiImport: Import = await helper.factories.import(
@@ -173,9 +173,9 @@ describe("tasks/profiles:enqueueExports", () => {
         exportedAt: null,
       });
 
-      await specHelper.runTask("profiles:enqueueExports", {});
+      await specHelper.runTask("records:enqueueExports", {});
 
-      const foundTasks = await specHelper.findEnqueuedTasks("profile:export");
+      const foundTasks = await specHelper.findEnqueuedTasks("record:export");
       expect(foundTasks.length).toEqual(1);
 
       await mario.destroy();

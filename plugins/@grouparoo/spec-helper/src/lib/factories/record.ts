@@ -28,5 +28,5 @@ export default async (props = {}, properties = {}) => {
     ...properties,
   });
 
-  return;
+  return record;
 };
