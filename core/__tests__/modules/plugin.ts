@@ -221,7 +221,7 @@ describe("modules/plugin", () => {
       });
     });
 
-    describe("replaceTemplateProfileVariables", () => {
+    describe("replaceTemplateRecordVariables", () => {
       it("will replace parts of the string with record information", async () => {
         const record = await helper.factories.record({
           createdAt: new Date(0),
@@ -234,7 +234,7 @@ describe("modules/plugin", () => {
         const initialString =
           "select first_name from users where id = {{userId}} and email = '{{email}}' # GrouparooRecord Created at {{createdAt.sql}}";
 
-        const replacedString = await plugin.replaceTemplateProfileVariables(
+        const replacedString = await plugin.replaceTemplateRecordVariables(
           initialString,
           record
         );
@@ -250,7 +250,7 @@ describe("modules/plugin", () => {
         const record = await helper.factories.record();
         await record.addOrUpdateProperties({ userId: null });
         await expect(
-          plugin.replaceTemplateProfileVariables(
+          plugin.replaceTemplateRecordVariables(
             `select email where id = {{userId}}`,
             record
           )
