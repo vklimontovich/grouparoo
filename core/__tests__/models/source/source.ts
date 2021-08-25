@@ -490,7 +490,7 @@ describe("models/source", () => {
       });
     });
 
-    test("it throws an error if the mapping does not include the key of a profilePropertyRyle", async () => {
+    test("it throws an error if the mapping does not include the key of a recordPropertyRyle", async () => {
       await expect(
         source.setMapping({
           local_user_id: "TheUserID",
@@ -745,7 +745,7 @@ describe("models/source", () => {
 
       originalProfilePropertyMethod = api.plugins.plugins.filter(
         (p) => p.name === "@grouparoo/test-plugin"
-      )[0].connections[0].methods.profileProperty;
+      )[0].connections[0].methods.recordProperty;
     });
 
     afterAll(async () => {
@@ -757,15 +757,12 @@ describe("models/source", () => {
     afterEach(() => {
       api.plugins.plugins.filter(
         (p) => p.name === "@grouparoo/test-plugin"
-      )[0].connections[0].methods.profileProperty = originalProfilePropertyMethod;
+      )[0].connections[0].methods.recordProperty = originalProfilePropertyMethod;
     });
 
     test("it will not import a draft property (single)", async () => {
       expect(lnameProperty.state).toBe("draft");
-      const property = await source.importProfileProperty(
-        record,
-        lnameProperty
-      );
+      const property = await source.importRecordProperty(record, lnameProperty);
       expect(property).toBeUndefined();
     });
 
@@ -778,27 +775,24 @@ describe("models/source", () => {
     test("it can import one record property for a record", async () => {
       await lnameProperty.setOptions({ column: "lname" });
       await lnameProperty.update({ state: "ready" });
-      const property = await source.importProfileProperty(
-        record,
-        lnameProperty
-      );
+      const property = await source.importRecordProperty(record, lnameProperty);
       expect(property).toEqual("...mario");
     });
 
     test("it can import one record property for a record with an override of the property options", async () => {
       await expect(
-        source.importProfileProperty(record, lnameProperty, {
+        source.importRecordProperty(record, lnameProperty, {
           something: "else",
         })
       ).rejects.toThrow(/column is required/);
 
-      await source.importProfileProperty(record, lnameProperty, {
+      await source.importRecordProperty(record, lnameProperty, {
         column: "abc",
       }); // does not throw
     });
 
     test("it can import one record property for a record with an override of the property filters", async () => {
-      await source.importProfileProperty(record, lnameProperty, null, []); // does not throw
+      await source.importRecordProperty(record, lnameProperty, null, []); // does not throw
     });
 
     test("it can import all record properties for this source, mapped to the property ids properly", async () => {
@@ -809,7 +803,7 @@ describe("models/source", () => {
     test("if importing returned null, it will not be included in the response hash to set record properties", async () => {
       api.plugins.plugins.filter(
         (p) => p.name === "@grouparoo/test-plugin"
-      )[0].connections[0].methods.profileProperty = async () => {
+      )[0].connections[0].methods.recordProperty = async () => {
         return null;
       };
 
@@ -821,7 +815,7 @@ describe("models/source", () => {
     test("if importing returned undefined, it will not be included in the response hash to set record properties", async () => {
       api.plugins.plugins.filter(
         (p) => p.name === "@grouparoo/test-plugin"
-      )[0].connections[0].methods.profileProperty = async () => {
+      )[0].connections[0].methods.recordProperty = async () => {
         return undefined;
       };
 
@@ -873,7 +867,7 @@ describe("models/source", () => {
 
       const previousRun = await helper.factories.run(schedule, {
         createdAt: new Date(0),
-        profilesReadCount: 1,
+        recordsReadCount: 1,
         state: "complete",
       });
       const run = await helper.factories.run(schedule);
@@ -928,7 +922,7 @@ describe("models/source", () => {
     });
   });
 
-  describe("#applyNonUniqueMappedResultsToAllProfiles", () => {
+  describe("#applyNonUniqueMappedResultsToAllRecords", () => {
     let source: Source;
     let sourceMapping: SourceMapping;
     let propertyA: Property;
@@ -982,7 +976,7 @@ describe("models/source", () => {
       const properties = [propertyA];
       const response = { [mario.id]: { [propertyA.id]: ["hello"] } };
       await expect(
-        SourceOps.applyNonUniqueMappedResultsToAllProfiles(response, {
+        SourceOps.applyNonUniqueMappedResultsToAllRecords(response, {
           records,
           properties,
           sourceMapping,
@@ -1005,7 +999,7 @@ describe("models/source", () => {
         const records = [mario, luigi];
         const properties = [propertyA];
         const response = { [mario.id]: { [propertyA.id]: ["hola"] } };
-        await SourceOps.applyNonUniqueMappedResultsToAllProfiles(response, {
+        await SourceOps.applyNonUniqueMappedResultsToAllRecords(response, {
           records,
           properties,
           sourceMapping,
@@ -1023,7 +1017,7 @@ describe("models/source", () => {
         const response = {
           [mario.id]: { [propertyA.id]: ["hola"], [propertyB.id]: ["bonjour"] },
         };
-        await SourceOps.applyNonUniqueMappedResultsToAllProfiles(response, {
+        await SourceOps.applyNonUniqueMappedResultsToAllRecords(response, {
           records,
           properties,
           sourceMapping,
@@ -1043,7 +1037,7 @@ describe("models/source", () => {
         const response = {
           [mario.id]: { [propertyA.id]: ["hola"], [propertyB.id]: ["bonjour"] },
         };
-        await SourceOps.applyNonUniqueMappedResultsToAllProfiles(response, {
+        await SourceOps.applyNonUniqueMappedResultsToAllRecords(response, {
           records,
           properties,
           sourceMapping,
