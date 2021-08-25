@@ -99,8 +99,8 @@ describe("tasks/group:destroy", () => {
         state: "ready",
       });
 
-      await group.addProfile(mario);
-      await group.addProfile(luigi);
+      await group.addRecord(mario);
+      await group.addRecord(luigi);
 
       await group.update({ state: "deleted" }); // mark group as deleted
 
@@ -128,8 +128,8 @@ describe("tasks/group:destroy", () => {
         state: "ready",
       });
 
-      await group.addProfile(mario);
-      await group.addProfile(luigi);
+      await group.addRecord(mario);
+      await group.addRecord(luigi);
 
       groupMemberCount = await group.$count("groupMembers");
       expect(groupMemberCount).toBe(2);

@@ -13,7 +13,7 @@ describe("models/import", () => {
       creatorId: "",
     });
 
-    const tasks = await specHelper.findEnqueuedTasks("import:associateProfile");
+    const tasks = await specHelper.findEnqueuedTasks("import:associateRecord");
     expect(tasks.length).toBe(1);
 
     await _import.destroy();
@@ -30,7 +30,7 @@ describe("models/import", () => {
     });
     expect(_import.recordId).toBeFalsy();
 
-    await _import.associateProfile();
+    await _import.associateRecord();
     expect(_import.recordId).toBe(record.id);
 
     await _import.destroy();
