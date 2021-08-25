@@ -191,12 +191,12 @@ describe("models/destination", () => {
         appId: app.id,
       });
 
-      const profile = await helper.factories.profile();
+      const record = await helper.factories.record();
       const _export = await Export.create({
         destinationId: destination.id,
-        profileId: profile.id,
-        oldProfileProperties: {},
-        newProfileProperties: {},
+        recordId: record.id,
+        oldRecordProperties: {},
+        newRecordProperties: {},
         oldGroups: [],
         newGroups: [],
       });
@@ -213,7 +213,7 @@ describe("models/destination", () => {
 
       await _export.destroy();
       await destination.destroy();
-      await profile.destroy();
+      await record.destroy();
     });
 
     test.each(["deleted", "ready"])(
@@ -391,7 +391,7 @@ describe("models/destination", () => {
         ).rejects.toThrow(/primary-id is a required/);
       });
 
-      test("required mappings with a type can only use profile properties that match the type", async () => {
+      test("required mappings with a type can only use record properties that match the type", async () => {
         destination = await helper.factories.destination();
         await expect(
           destination.setMapping({
@@ -651,13 +651,13 @@ describe("models/destination", () => {
         expect(_group).toBe(null);
       });
 
-      test("profilePreview - without updates - with group", async () => {
-        const profile = await helper.factories.profile();
-        await profile.addOrUpdateProperties({
+      test("recordPreview - without updates - with group", async () => {
+        const record = await helper.factories.record();
+        await record.addOrUpdateProperties({
           userId: [1],
           email: ["yoshi@example.com"],
         });
-        await group.addProfile(profile);
+        await group.addProfile(record);
         await destination.trackGroup(group);
 
         const mapping = {
@@ -668,8 +668,8 @@ describe("models/destination", () => {
         const destinationGroupMemberships = {};
         destinationGroupMemberships[group.id] = "another-group-tag";
 
-        const _profile = await destination.profilePreview(
-          profile,
+        const _profile = await destination.recordPreview(
+          record,
           mapping,
           destinationGroupMemberships
         );
@@ -679,17 +679,17 @@ describe("models/destination", () => {
         );
         expect(_profile.groupNames).toEqual(["another-group-tag"]);
 
-        await profile.destroy();
+        await record.destroy();
       });
 
-      test("destination profile previews will convert the type of the property to match the destination", async () => {
-        const profile = await helper.factories.profile();
-        await profile.addOrUpdateProperties({
+      test("destination record previews will convert the type of the property to match the destination", async () => {
+        const record = await helper.factories.record();
+        await record.addOrUpdateProperties({
           userId: [1],
           email: ["yoshi@example.com"],
           ltv: [123],
         });
-        await group.addProfile(profile);
+        await group.addProfile(record);
         await destination.trackGroup(group);
 
         const mapping = {
@@ -697,7 +697,7 @@ describe("models/destination", () => {
           "string-property": "ltv",
         };
 
-        const _profile = await destination.profilePreview(profile, mapping, {});
+        const _profile = await destination.recordPreview(record, mapping, {});
 
         expect(_profile.properties["primary-id"].values[0]).toBe(1);
         expect(_profile.properties["primary-id"].type).toBe("integer");
@@ -705,19 +705,19 @@ describe("models/destination", () => {
         expect(_profile.properties["string-property"].values[0]).toBe("123");
         expect(_profile.properties["string-property"].type).toBe("string");
 
-        await profile.destroy();
+        await record.destroy();
       });
 
       describe("destinationsForGroups", () => {
-        it("determined relevant destinations for a profile", async () => {
+        it("determined relevant destinations for a record", async () => {
           const otherDestination = await helper.factories.destination();
-          const profile = await helper.factories.profile();
-          await group.addProfile(profile);
+          const record = await helper.factories.record();
+          await group.addProfile(record);
 
           // before the destinations are ready
           await destination.trackGroup(group);
           let destinations = await Destination.destinationsForGroups(
-            await profile.$get("groups")
+            await record.$get("groups")
           );
           expect(destinations.length).toBe(0);
 
@@ -729,7 +729,7 @@ describe("models/destination", () => {
           await otherDestination.trackGroup(group);
 
           destinations = await Destination.destinationsForGroups(
-            await profile.$get("groups")
+            await record.$get("groups")
           );
           expect(destinations.length).toBe(2);
           expect(destinations.map((d) => d.id).sort()).toEqual(
@@ -737,7 +737,7 @@ describe("models/destination", () => {
           );
 
           await destination.unTrackGroup();
-          await group.removeProfile(profile);
+          await group.removeProfile(record);
           await otherDestination.unTrackGroup();
           await otherDestination.destroy();
         });
