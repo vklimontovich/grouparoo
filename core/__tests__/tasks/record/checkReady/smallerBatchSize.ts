@@ -13,7 +13,7 @@ describe("tasks/record:checkReady", () => {
   beforeAll(async () => await helper.factories.properties());
 
   describe("records:checkReady", () => {
-    test.only("batch size can be configured with a setting", async () => {
+    test("batch size can be configured with a setting", async () => {
       const mario = await helper.factories.record();
       await mario.import();
       await mario.update({ state: "pending" });
